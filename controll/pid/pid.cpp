@@ -2,56 +2,56 @@
 
 PID::PID(PIDType type)
 {
-    _type = type;
-    _unit = BaseUnit::Pico;
+    type = type;
+    unit = BaseUnit::Pico;
     reset();
 }
 
 PID::PID(PIDType type, BaseUnit unit)
 {
-    _type = type;
-    _unit = unit;
+    type = type;
+    unit = unit;
     reset();
 }
 
-void PID::setGuard(double min, double max, bool guard)
+void PID::set_guard(double min, double max, bool guard)
 {
-    _min = min * _unit;
-    _max = max * _unit;
-    _guard = guard;
+    min = min * unit;
+    max = max * unit;
+    enable_guard = guard;
 }
 
-void PID::setGain(double Kp, double Ki, double Kd, double Kf)
+void PID::set_gain(double Kp, double Ki, double Kd, double Kf)
 {
-    _Kp = Kp;
-    _Ki = Ki;
-    _Kd = Kd;
-    _Kf = Kf;
+    Kp = Kp;
+    Ki = Ki;
+    Kd = Kd;
+    Kf = Kf;
 }
 
 void PID::reset()
 {
-    _error[0] = 0;
-    _error[1] = 0;
-    _error[2] = 0;
-    _integral = 0;
-    _output = 0;
-    _target = 0;
-    _value = 0;
+    errors[0] = 0;
+    errors[1] = 0;
+    errors[2] = 0;
+    integral = 0;
+    output = 0;
+    target = 0;
+    value = 0;
 }
 
 double PID::calculate(double target, double current, double dt)
 {
-    switch (_type)
+    switch (type)
     {
     case PIDType::pPID:
-        return (double)calculate_pPID(target * _unit, current * _unit, dt) / (double)_unit;
+        return (double)calculate_pPID(target * unit, current * unit, dt) / (double)unit;
     case PIDType::sPID:
-        return (double)calculate_sPID(target * _unit, current * _unit, dt) / (double)_unit;
+        return (double)calculate_sPID(target * unit, current * unit, dt) / (double)unit;
     case PIDType::PI_D:
-        return (double)calculate_PI_D(target * _unit, current * _unit, dt) / (double)_unit;
+        return (double)calculate_PI_D(target * unit, current * unit, dt) / (double)unit;
     case PIDType::I_PD:
-        return (double)calculate_I_PD(target * _unit, current * _unit, dt) / (double)_unit;
+        return (double)calculate_I_PD(target * unit, current * unit, dt) / (double)unit;
     default:
         return 0;
     }
@@ -59,72 +59,72 @@ double PID::calculate(double target, double current, double dt)
 
 void PID::add_error(int64_t error)
 {
-    _error[2] = _error[1];
-    _error[1] = _error[0];
-    _error[0] = error;
+    errors[2] = errors[1];
+    errors[1] = errors[0];
+    errors[0] = error;
 }
 
 int64_t PID::guard(int64_t value)
 {
-    return value > _max ? _max : (_min > value ? _min : value);
+    return value > max ? max : (min > value ? min : value);
 }
 
 int64_t PID::calculate_pPID(int64_t target, int64_t current, double dt)
 {
     add_error(target - current);
-    _integral += (_error[0] + _error[1]) / 2 * dt;
+    integral += (errors[0] + errors[1]) / 2 * dt;
 
-    int64_t mp = _Kp * _error[0];
-    int64_t mi = _Ki * _integral;
-    int64_t md = _Kd * (_error[0] - _error[1]) / dt;
+    int64_t mp = Kp * errors[0];
+    int64_t mi = Ki * integral;
+    int64_t md = Kd * (errors[0] - errors[1]) / dt;
 
-    _output = mp + mi + md;
-    _output += _Kf * target; // Feed-Forward
-    _output = _guard ? guard(_output) : _output;
-    return _output;
+    output = mp + mi + md;
+    output += Kf * target; // Feed-Forward
+    output = enable_guard ? guard(output) : output;
+    return output;
 }
 
 int64_t PID::calculate_sPID(int64_t target, int64_t current, double dt)
 {
     add_error(target - current);
-    int64_t mp = _Kp * (_error[0] - _error[1]);
-    int64_t mi = _Ki * _error[0] * dt;
-    int64_t md = _Kd * (_error[0] - (2 * _error[1]) + _error[2]) / dt;
+    int64_t mp = Kp * (errors[0] - errors[1]);
+    int64_t mi = Ki * errors[0] * dt;
+    int64_t md = Kd * (errors[0] - (2 * errors[1]) + errors[2]) / dt;
 
-    _output += mp + mi + md;
-    _output += _Kf * (target - _target) / dt; // Feed-Forward
-    _target = target;
-    return _guard ? guard(_output) : _output;
+    output += mp + mi + md;
+    output += Kf * (target - target) / dt; // Feed-Forward
+    target = target;
+    return enable_guard ? guard(output) : output;
 }
 
 int64_t PID::calculate_PI_D(int64_t target, int64_t current, double dt)
 {
     add_error(target - current);
-    _integral += (_error[0] + _error[1]) / 2 * dt;
+    integral += (errors[0] + errors[1]) / 2 * dt;
 
-    int64_t mp = _Kp * _error[0];
-    int64_t mi = _Ki * _integral;
-    int64_t md = _Kd * (current - _value) / dt;
+    int64_t mp = Kp * errors[0];
+    int64_t mi = Ki * integral;
+    int64_t md = Kd * (current - value) / dt;
 
-    _output = mp + mi - md;
-    _output += _Kf * target;
-    _output = _guard ? guard(_output) : _output;
-    _value = current;
-    return _output;
+    output = mp + mi - md;
+    output += Kf * target;
+    output = enable_guard ? guard(output) : output;
+    value = current;
+    return output;
 }
 
 int64_t PID::calculate_I_PD(int64_t target, int64_t current, double dt)
 {
     add_error(target - current);
-    _integral += (_error[0] + _error[1]) / 2 * dt;
+    integral += (errors[0] + errors[1]) / 2 * dt;
 
-    double mp = _Kp * current;
-    double mi = _Ki * _integral;
-    double md = _Kd * (current - _value) / dt;
+    double mp = Kp * current;
+    double mi = Ki * integral;
+    double md = Kd * (current - value) / dt;
 
-    _output = -mp + mi - md;
-    _output += _Kf * target;
-    _output = _guard ? guard(_output) : _output;
-    _value = current;
-    return _output;
+    output = -mp + mi - md;
+    output += Kf * target;
+    output = enable_guard ? guard(output) : output;
+    value = current;
+    return output;
 }

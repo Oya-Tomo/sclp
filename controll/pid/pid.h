@@ -25,8 +25,8 @@ public:
 
     PID(PIDType type);
     PID(PIDType type, BaseUnit unit);
-    void setGuard(double min, double max, bool guard);
-    void setGain(double Kp, double Ki, double Kd, double Kf);
+    void set_guard(double min, double max, bool guard);
+    void set_gain(double Kp, double Ki, double Kd, double Kf);
     void reset();
     double calculate(double target, double current, double dt);
 
@@ -38,23 +38,23 @@ private:
     int64_t calculate_PI_D(int64_t target, int64_t current, double dt);
     int64_t calculate_I_PD(int64_t target, int64_t current, double dt);
 
-    PIDType _type;
-    BaseUnit _unit;
+    PIDType type;
+    BaseUnit unit;
 
-    double _Kp;
-    double _Ki;
-    double _Kd;
-    double _Kf;
+    double Kp;
+    double Ki;
+    double Kd;
+    double Kf;
 
-    int64_t _min;
-    int64_t _max;
-    bool _guard;
+    int64_t min;
+    int64_t max;
+    bool enable_guard;
 
-    int64_t _error[3]; // current value, one previous, two previous
-    int64_t _integral;
-    int64_t _output;
-    int64_t _target;
-    int64_t _value;
+    int64_t errors[3]; // current value, one previous, two previous
+    int64_t integral;
+    int64_t output;
+    int64_t target;
+    int64_t value;
 };
 
 #endif
