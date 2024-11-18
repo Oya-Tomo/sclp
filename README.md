@@ -1,5 +1,7 @@
 # Standard Control Library for Pico
 
+<img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/raspberrypi/raspberrypi-original.svg" width=64/>
+
 ## Overview
 
 - This library provides a set of standard control functions for some modules.
