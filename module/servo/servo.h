@@ -3,9 +3,7 @@
 class Servo
 {
 public:
-    Servo(
-        uint8_t pin_pwm
-    );
+    Servo(uint8_t pin_pwm);
 
     ~Servo();
 
@@ -13,6 +11,7 @@ public:
 
     void set_angle(double angle);
     double get_angle();
+
 private:
     uint8_t pin_pwm;
     double angle;
