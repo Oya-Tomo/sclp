@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pico/stdlib.h"
+#include "hardware/pwm.h"
 
 class MotorDriver3Pins
 {
@@ -20,7 +21,7 @@ private:
     uint8_t pin_dir;
 
     uint32_t pwm_slice_num;
-    pwm_config pwm_config;
+    pwm_config pwm_slice_config;
 };
 
 class MotorDriver4Pins
@@ -44,5 +45,5 @@ private:
     uint8_t pin_dir2;
 
     uint32_t pwm_slice_num;
-    pwm_config pwm_config;
+    pwm_config pwm_slice_config;
 };

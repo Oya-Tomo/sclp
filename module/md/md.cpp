@@ -1,7 +1,5 @@
 #include "md.h"
 
-#include "hardware/pwm.h"
-
 MotorDriver3Pins::MotorDriver3Pins(uint8_t pin_pwm, uint8_t pin_dir)
 {
     this->pin_pwm = pin_pwm;
@@ -21,9 +19,9 @@ void MotorDriver3Pins::init()
     gpio_set_function(this->pin_pwm, GPIO_FUNC_PWM);
 
     this->pwm_slice_num = pwm_gpio_to_slice_num(this->pin_pwm);
-    this->pwm_config = pwm_get_default_config();
+    this->pwm_slice_config = pwm_get_default_config();
 
-    pwm_init(this->pwm_slice_num, &this->pwm_config, true);
+    pwm_init(this->pwm_slice_num, &this->pwm_slice_config, true);
     pwm_set_gpio_level(this->pin_pwm, 0);
 
     gpio_init(this->pin_dir);
@@ -32,7 +30,7 @@ void MotorDriver3Pins::init()
 
 void MotorDriver3Pins::set_duty_cycle(double percentage)
 {
-    pwm_set_gpio_level(this->pin_pwm, this->pwm_config.top * percentage);
+    pwm_set_gpio_level(this->pin_pwm, this->pwm_slice_config.top * percentage);
 }
 
 void MotorDriver3Pins::set_direction(bool clockwise)
@@ -60,9 +58,9 @@ void MotorDriver4Pins::init()
     gpio_set_dir(this->pin_pwm, GPIO_OUT);
 
     this->pwm_slice_num = pwm_gpio_to_slice_num(this->pin_pwm);
-    this->pwm_config = pwm_get_default_config();
+    this->pwm_slice_config = pwm_get_default_config();
 
-    pwm_init(this->pwm_slice_num, &this->pwm_config, true);
+    pwm_init(this->pwm_slice_num, &this->pwm_slice_config, true);
     pwm_set_gpio_level(this->pin_pwm, 0);
 
     gpio_init(this->pin_dir1);
@@ -74,7 +72,7 @@ void MotorDriver4Pins::init()
 
 void MotorDriver4Pins::set_duty_cycle(double percentage)
 {
-    pwm_set_gpio_level(this->pin_pwm, this->pwm_config.top * percentage);
+    pwm_set_gpio_level(this->pin_pwm, this->pwm_slice_config.top * percentage);
 }
 
 void MotorDriver4Pins::set_direction(bool clockwise)
