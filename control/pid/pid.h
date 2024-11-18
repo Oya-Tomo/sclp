@@ -1,5 +1,4 @@
-#ifndef PID_H
-#define PID_H
+#pragma once
 
 #include "pico/stdlib.h"
 
@@ -56,5 +55,3 @@ private:
     int64_t target;
     int64_t value;
 };
-
-#endif
