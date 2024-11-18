@@ -20,9 +20,11 @@ void Servo::init()
 
 void Servo::set_angle(double angle)
 {
+    // wip
 }
 
 double Servo::get_angle()
 {
-    return 0.0;
+    // wip
+    return this->angle;
 }
