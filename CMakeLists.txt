@@ -1,4 +1,5 @@
 add_library(sclp STATIC
+    ${CMAKE_CURRENT_LIST_DIR}/module/md/md.cpp
     ${CMAKE_CURRENT_LIST_DIR}/module/qei/qei.cpp
     ${CMAKE_CURRENT_LIST_DIR}/module/servo/servo.cpp
     ${CMAKE_CURRENT_LIST_DIR}/control/pid/pid.cpp
