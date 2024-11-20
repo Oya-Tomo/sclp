@@ -11,17 +11,24 @@ public:
         uint8_t pin_dir);
     ~MotorDriver3Pins();
 
-    void init();
+    typedef struct
+    {
+        uint32_t pwm_clkdiv;
+        uint32_t pwm_wrap;
+    } config_t;
 
-    void set_duty_cycle(double percentage);
-    void set_direction(bool clockwise);
+    void configure(config_t config);
+
+    void set_duty_ratio(double ratio);
 
 private:
     uint8_t pin_pwm;
     uint8_t pin_dir;
 
-    uint32_t pwm_slice_num;
-    pwm_config pwm_slice_config;
+    config_t config;
+
+    uint32_t pwm_slice;
+    uint32_t pwm_channel;
 };
 
 class MotorDriver4Pins
@@ -33,17 +40,23 @@ public:
         uint8_t pin_dir2);
     ~MotorDriver4Pins();
 
-    void init();
+    typedef struct
+    {
+        uint32_t pwm_clkdiv;
+        uint32_t pwm_wrap;
+    } config_t;
 
-    void set_duty_cycle(double percentage);
-    void set_direction(bool clockwise);
-    void set_high_brake();
+    void configure(config_t config);
+
+    void set_duty_ratio(double ratio);
 
 private:
     uint8_t pin_pwm;
     uint8_t pin_dir1;
     uint8_t pin_dir2;
 
-    uint32_t pwm_slice_num;
-    pwm_config pwm_slice_config;
+    config_t config;
+
+    uint32_t pwm_slice;
+    uint32_t pwm_channel;
 };
