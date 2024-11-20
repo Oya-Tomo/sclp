@@ -22,10 +22,20 @@ public:
         Femto = 1000000000000000,
     };
 
+    typedef struct
+    {
+        double Kp;
+        double Ki;
+        double Kd;
+        double Kf;
+        bool guard;
+        double min;
+        double max;
+    } config_t;
+
     PID(PIDType type);
     PID(PIDType type, BaseUnit unit);
-    void set_guard(double min, double max, bool guard);
-    void set_gain(double Kp, double Ki, double Kd, double Kf);
+    void configure(config_t config);
     void reset();
     double calculate(double target, double current, double dt);
 
@@ -40,14 +50,7 @@ private:
     PIDType type;
     BaseUnit unit;
 
-    double Kp;
-    double Ki;
-    double Kd;
-    double Kf;
-
-    int64_t min;
-    int64_t max;
-    bool enable_guard;
+    config_t config;
 
     int64_t errors[3]; // current value, one previous, two previous
     int64_t integral;

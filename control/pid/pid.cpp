@@ -14,19 +14,9 @@ PID::PID(PIDType type, BaseUnit unit)
     reset();
 }
 
-void PID::set_guard(double min, double max, bool guard)
+void PID::configure(config_t config)
 {
-    min = min * unit;
-    max = max * unit;
-    enable_guard = guard;
-}
-
-void PID::set_gain(double Kp, double Ki, double Kd, double Kf)
-{
-    Kp = Kp;
-    Ki = Ki;
-    Kd = Kd;
-    Kf = Kf;
+    this->config = config;
 }
 
 void PID::reset()
@@ -66,7 +56,7 @@ void PID::add_error(int64_t error)
 
 int64_t PID::guard(int64_t value)
 {
-    return value > max ? max : (min > value ? min : value);
+    return value > this->config.max ? this->config.max : (this->config.min > value ? this->config.min : value);
 }
 
 int64_t PID::calculate_pPID(int64_t target, int64_t current, double dt)
@@ -74,27 +64,27 @@ int64_t PID::calculate_pPID(int64_t target, int64_t current, double dt)
     add_error(target - current);
     integral += (errors[0] + errors[1]) / 2 * dt;
 
-    int64_t mp = Kp * errors[0];
-    int64_t mi = Ki * integral;
-    int64_t md = Kd * (errors[0] - errors[1]) / dt;
+    int64_t mp = this->config.Kp * errors[0];
+    int64_t mi = this->config.Ki * integral;
+    int64_t md = this->config.Kd * (errors[0] - errors[1]) / dt;
 
     output = mp + mi + md;
-    output += Kf * target; // Feed-Forward
-    output = enable_guard ? guard(output) : output;
+    output += this->config.Kf * target; // Feed-Forward
+    output = this->config.guard ? guard(output) : output;
     return output;
 }
 
 int64_t PID::calculate_sPID(int64_t target, int64_t current, double dt)
 {
     add_error(target - current);
-    int64_t mp = Kp * (errors[0] - errors[1]);
-    int64_t mi = Ki * errors[0] * dt;
-    int64_t md = Kd * (errors[0] - (2 * errors[1]) + errors[2]) / dt;
+    int64_t mp = this->config.Kp * (errors[0] - errors[1]);
+    int64_t mi = this->config.Ki * errors[0] * dt;
+    int64_t md = this->config.Kd * (errors[0] - (2 * errors[1]) + errors[2]) / dt;
 
     output += mp + mi + md;
-    output += Kf * (target - target) / dt; // Feed-Forward
+    output += this->config.Kf * (target - target) / dt; // Feed-Forward
     target = target;
-    return enable_guard ? guard(output) : output;
+    return this->config.guard ? guard(output) : output;
 }
 
 int64_t PID::calculate_PI_D(int64_t target, int64_t current, double dt)
@@ -102,13 +92,13 @@ int64_t PID::calculate_PI_D(int64_t target, int64_t current, double dt)
     add_error(target - current);
     integral += (errors[0] + errors[1]) / 2 * dt;
 
-    int64_t mp = Kp * errors[0];
-    int64_t mi = Ki * integral;
-    int64_t md = Kd * (current - value) / dt;
+    int64_t mp = this->config.Kp * errors[0];
+    int64_t mi = this->config.Ki * integral;
+    int64_t md = this->config.Kd * (current - value) / dt;
 
     output = mp + mi - md;
-    output += Kf * target;
-    output = enable_guard ? guard(output) : output;
+    output += this->config.Kf * target;
+    output = this->config.guard ? guard(output) : output;
     value = current;
     return output;
 }
@@ -118,13 +108,13 @@ int64_t PID::calculate_I_PD(int64_t target, int64_t current, double dt)
     add_error(target - current);
     integral += (errors[0] + errors[1]) / 2 * dt;
 
-    double mp = Kp * current;
-    double mi = Ki * integral;
-    double md = Kd * (current - value) / dt;
+    double mp = this->config.Kp * current;
+    double mi = this->config.Ki * integral;
+    double md = this->config.Kd * (current - value) / dt;
 
     output = -mp + mi - md;
-    output += Kf * target;
-    output = enable_guard ? guard(output) : output;
+    output += this->config.Kf * target;
+    output = this->config.guard ? guard(output) : output;
     value = current;
     return output;
 }
