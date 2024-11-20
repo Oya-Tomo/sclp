@@ -52,7 +52,7 @@ MotorDriver4Pins::~MotorDriver4Pins()
     gpio_deinit(this->pin_dir2);
 }
 
-void MotorDriver4Pins::configure(config_t config)
+void MotorDriver4Pins::configure(MotorDriver4Pins::config_t config)
 {
     this->config = config;
 
