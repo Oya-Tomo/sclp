@@ -5,16 +5,20 @@
 class QEI
 {
     const double PI = 3.1415926535;
+
 public:
     QEI(
         uint8_t pin_a,
-        uint8_t pin_b,
-        int ppr
-    );
+        uint8_t pin_b);
 
     ~QEI();
 
-    void init();
+    typedef struct
+    {
+        int ppr;
+    } config_t;
+
+    void configure(config_t config);
 
     void callback_register(uint gpio, uint32_t events);
 
@@ -34,7 +38,8 @@ private:
     uint8_t pin_a;
     uint8_t pin_b;
 
-    int ppr;
+    config_t config;
+
     int counts;
 
     void pin_a_irq(uint gpio, uint32_t events);

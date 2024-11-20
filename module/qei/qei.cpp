@@ -1,10 +1,9 @@
 #include "qei.h"
 
-QEI::QEI(uint8_t pin_a, uint8_t pin_b, int ppr)
+QEI::QEI(uint8_t pin_a, uint8_t pin_b)
 {
     this->pin_a = pin_a;
     this->pin_b = pin_b;
-    this->ppr = ppr;
 }
 
 QEI::~QEI()
@@ -15,15 +14,17 @@ QEI::~QEI()
     gpio_deinit(this->pin_b);
 }
 
-void QEI::init()
+void QEI::configure(config_t config)
 {
-    gpio_init(pin_a);
-    gpio_set_dir(pin_a, GPIO_IN);
-    gpio_set_irq_enabled(pin_a, GPIO_IRQ_EDGE_FALL | GPIO_IRQ_EDGE_RISE, true);
+    this->config = config;
 
-    gpio_init(pin_b);
-    gpio_set_dir(pin_b, GPIO_IN);
-    gpio_set_irq_enabled(pin_b, GPIO_IRQ_EDGE_FALL | GPIO_IRQ_EDGE_RISE, true);
+    gpio_init(this->pin_a);
+    gpio_set_dir(this->pin_a, GPIO_IN);
+    gpio_set_irq_enabled(this->pin_a, GPIO_IRQ_EDGE_FALL | GPIO_IRQ_EDGE_RISE, true);
+
+    gpio_init(this->pin_b);
+    gpio_set_dir(this->pin_b, GPIO_IN);
+    gpio_set_irq_enabled(this->pin_b, GPIO_IRQ_EDGE_FALL | GPIO_IRQ_EDGE_RISE, true);
 }
 
 void QEI::callback_register(uint gpio, uint32_t events)
@@ -97,12 +98,12 @@ int QEI::get_counts()
 
 int QEI::get_ppr()
 {
-    return this->ppr;
+    return this->config.ppr;
 }
 
 int QEI::get_cpr()
 {
-    return this->ppr * 4;
+    return this->config.ppr * 4;
 }
 
 double QEI::get_rotations()
