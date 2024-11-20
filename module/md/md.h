@@ -13,8 +13,8 @@ public:
 
     typedef struct
     {
-        uint32_t pwm_clkdiv;
-        uint32_t pwm_wrap;
+        float pwm_clkdiv;
+        uint16_t pwm_wrap;
     } config_t;
 
     void configure(config_t config);
@@ -42,8 +42,8 @@ public:
 
     typedef struct
     {
-        uint32_t pwm_clkdiv;
-        uint32_t pwm_wrap;
+        float pwm_clkdiv;
+        uint16_t pwm_wrap;
     } config_t;
 
     void configure(config_t config);
