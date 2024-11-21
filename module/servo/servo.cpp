@@ -1,4 +1,5 @@
 #include "servo.h"
+#include "constant.h"
 
 #include "hardware/pwm.h"
 
@@ -32,11 +33,17 @@ void Servo::configure(config_t config)
 
 void Servo::set_angle(double angle)
 {
-    double pwm_hz = 125000000.0 / (this->config.pwm_clkdiv * this->config.pwm_wrap);
-    double pulse_width_us = 1.0 / pwm_hz * 1000000.0;
-    double pulse_high_width_us = this->config.pulse_min_us + (this->config.pulse_max_us - this->config.pulse_min_us) * angle;
+    double pwm_hz = PICO_PWM_CLK / (this->config.pwm_clkdiv * this->config.pwm_wrap);
+    double angle_ratio = (angle - this->config.min_angle) / (this->config.max_angle - this->config.min_angle);
+    double pulse_us = 1.0 / (pwm_hz * 1000000.0);
+    double pulse_high_us = this->config.min_pulse_us + (this->config.max_pulse_us - this->config.min_pulse_us) * angle_ratio;
 
-    double duty_cycle = pulse_high_width_us / pulse_width_us;
+    double duty_cycle = pulse_high_us / pulse_us;
 
     pwm_set_chan_level(this->pwm_slice, this->pwm_channel, this->config.pwm_wrap * duty_cycle);
+}
+
+double Servo::guard(double value, double min, double max)
+{
+    return value < min ? min : (value > max ? max : value);
 }

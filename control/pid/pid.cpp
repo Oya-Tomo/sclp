@@ -56,7 +56,9 @@ void PID::add_error(int64_t error)
 
 int64_t PID::guard(int64_t value)
 {
-    return value > this->config.max ? this->config.max : (this->config.min > value ? this->config.min : value);
+    int64_t min = this->config.min * unit;
+    int64_t max = this->config.max * unit;
+    return value > max ? max : (min > value ? min : value);
 }
 
 int64_t PID::calculate_pPID(int64_t target, int64_t current, double dt)

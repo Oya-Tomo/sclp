@@ -15,8 +15,10 @@ public:
     {
         float pwm_clkdiv;
         uint16_t pwm_wrap;
-        uint16_t pulse_min_us;
-        uint16_t pulse_max_us;
+        double min_pulse_us;
+        double min_angle;
+        double max_pulse_us;
+        double max_angle;
     } config_t;
 
     void configure(config_t config);
@@ -30,4 +32,6 @@ private:
 
     uint32_t pwm_slice;
     uint32_t pwm_channel;
+
+    double guard(double value, double min, double max);
 };
