@@ -4,8 +4,6 @@
 
 class QEI
 {
-    const double PI = 3.1415926535;
-
 public:
     QEI(
         uint8_t pin_a,

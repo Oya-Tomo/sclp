@@ -1,5 +1,7 @@
 #include "qei.h"
 
+#include "../../constants.h"
+
 QEI::QEI(uint8_t pin_a, uint8_t pin_b)
 {
     this->pin_a = pin_a;
