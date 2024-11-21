@@ -35,7 +35,7 @@ void Servo::set_angle(double angle)
 {
     double pwm_hz = PICO_PWM_CLK / (this->config.pwm_clkdiv * this->config.pwm_wrap);
     double angle_ratio = (angle - this->config.min_angle) / (this->config.max_angle - this->config.min_angle);
-    double pulse_us = 1.0 / (pwm_hz * 1000000.0);
+    double pulse_us = 1000000.0 / pwm_hz;
     double pulse_high_us = this->config.min_pulse_us + (this->config.max_pulse_us - this->config.min_pulse_us) * angle_ratio;
 
     double duty_cycle = pulse_high_us / pulse_us;
