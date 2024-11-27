@@ -15,6 +15,7 @@ public:
     {
         float pwm_clkdiv;
         uint16_t pwm_wrap;
+        bool reverse;
     } config_t;
 
     void configure(config_t config);

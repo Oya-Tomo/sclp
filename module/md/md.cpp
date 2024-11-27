@@ -34,6 +34,10 @@ void MotorDriver3Pins::configure(MotorDriver3Pins::config_t config)
 
 void MotorDriver3Pins::set_duty_ratio(double ratio)
 {
+    if (this->config.reverse)
+    {
+        ratio = -ratio;
+    }
     pwm_set_chan_level(this->pwm_slice, this->pwm_channel, abs(ratio) * this->config.pwm_wrap);
     gpio_put(this->pin_dir, ratio >= 0);
 }
