@@ -14,6 +14,7 @@ public:
     typedef struct
     {
         int ppr;
+        bool reverse;
     } config_t;
 
     void configure(config_t config);
@@ -29,6 +30,7 @@ public:
 
     void reset();
 
+    void set_counts(int counts);
     void set_rotations(double rotations);
     void set_radians(double radians);
 

@@ -95,7 +95,7 @@ void QEI::pin_b_irq(uint gpio, uint32_t events)
 
 int QEI::get_counts()
 {
-    return this->counts;
+    return this->counts * (this->config.reverse ? -1 : 1);
 }
 
 int QEI::get_ppr()
@@ -110,7 +110,7 @@ int QEI::get_cpr()
 
 double QEI::get_rotations()
 {
-    return (double)this->counts / (double)this->get_cpr();
+    return (double)this->get_counts() / (double)this->get_cpr();
 }
 
 double QEI::get_radians()
@@ -123,9 +123,14 @@ void QEI::reset()
     this->counts = 0;
 }
 
+void QEI::set_counts(int counts)
+{
+    this->counts = counts * (this->config.reverse ? -1 : 1);
+}
+
 void QEI::set_rotations(double rotations)
 {
-    this->counts = (int)(rotations * this->get_cpr());
+    this->set_counts((int)(rotations * this->get_cpr()));
 }
 
 void QEI::set_radians(double radians)
